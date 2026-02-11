@@ -149,14 +149,16 @@
     import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-    // TAM GÜNCƏLLƏNMİŞ CONFG
+    // DOĞRULANMIŞ SDK KONFİQURASİYASI
     const firebaseConfig = {
-        apiKey: "BIcJliVDusCZpuO0H2hjk9vWgC_N3Sq3HOLZLxZk1FYMmlJMHrHqKf17LZ8tdi2cDhkAArDGIxPe9PrbgqArm94",
+        apiKey: "AIzaSyB9mGWhVpa2QL7MkNoE4pmn8DiN8-8K4Uw",
         authDomain: "cyberism-7104c.firebaseapp.com",
+        databaseURL: "https://cyberism-7104c-default-rtdb.firebaseio.com",
         projectId: "cyberism-7104c",
-        storageBucket: "cyberism-7104c.appspot.com",
+        storageBucket: "cyberism-7104c.firebasestorage.app",
         messagingSenderId: "192151274908",
-        appId: "1:192151274908:web:984ded6f04bb9f1f89f459"
+        appId: "1:192151274908:web:984ded6f04bb9f1f89f459",
+        measurementId: "G-DMRVZ9T9CL"
     };
 
     const app = initializeApp(firebaseConfig);
