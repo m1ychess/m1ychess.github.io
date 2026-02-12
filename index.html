@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>M1YCHESS - Cyberism Edition</title>
+    <title>M1YCHESS - Cyberism Ultimate</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
@@ -11,163 +11,142 @@
     
     <style>
         body {
-            background: radial-gradient(circle at center, #2e1065, #1e3a8a, #020617);
+            background: #020617;
             color: white;
-            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-family: 'Inter', sans-serif;
             min-height: 100vh;
-            overflow-x: hidden;
         }
         .m1y-glass {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(15px);
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 1.5rem;
-        }
-        .chess-coin {
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(45deg, #fbbf24, #f59e0b);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: #451a03;
-            box-shadow: 0 0 20px rgba(245, 158, 11, 0.5);
-            animation: coin-spin 3s infinite linear;
-        }
-        @keyframes coin-spin {
-            0% { transform: rotateY(0deg); }
-            100% { transform: rotateY(360deg); }
+            border-radius: 1rem;
         }
 
-        /* YENİ: KODLA YARADILAN TAXTA STİLLƏRİ */
+        /* TAXTA VƏ DAŞLAR */
         #board-container {
             width: 100%;
-            max-width: 400px;
-            margin: 0 auto;
-            border: 8px solid #4338ca;
-            border-radius: 8px;
+            max-width: 450px;
+            aspect-ratio: 1/1;
+            border: 6px solid #1e293b;
             display: grid;
             grid-template-columns: repeat(8, 1fr);
-            grid-template-rows: repeat(8, 1fr);
-            aspect-ratio: 1/1;
+            margin: auto;
         }
         .sq {
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 32px;
+            font-size: clamp(24px, 6vw, 44px);
             cursor: pointer;
-            user-select: none;
         }
-        .w-sq { background-color: #dee3e6; }
-        .b-sq { background-color: #8ca2ad; }
+        .w-sq { background-color: #f0d9b5; }
+        .b-sq { background-color: #b58863; }
         .selected-sq { background-color: #fbbf24 !important; }
-        .piece.w { color: #fff; text-shadow: 0 0 3px #000; }
-        .piece.b { color: #000; }
+        
+        /* Daşların Rəngləri */
+        .piece.w { color: #ffffff; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); filter: drop-shadow(0 0 1px black); }
+        .piece.b { color: #000000; }
 
-        .nav-btn { transition: all 0.3s; padding: 0.5rem 1rem; border-radius: 0.5rem; }
-        .nav-btn:hover { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+        .section { display: none; }
+        .section.active { display: block; }
+        
+        .nav-link { 
+            padding: 10px 15px; 
+            border-radius: 8px; 
+            transition: 0.3s; 
+            font-weight: 600; 
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        .nav-link:hover { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
     </style>
 </head>
 <body>
 
-<div id="auth-screen" class="flex items-center justify-center min-h-screen">
-    <div class="m1y-glass p-10 w-full max-w-md animate__animated animate__zoomIn">
-        <div class="text-center mb-10">
-            <h1 class="text-5xl font-extrabold tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">M1YCHESS</h1>
-            <p class="text-blue-200 opacity-60">CYBERISM Platform</p>
-        </div>
-        
-        <div class="space-y-5">
-            <input type="text" id="username" placeholder="İstifadəçi adı" class="w-full p-4 rounded-xl bg-gray-950 border border-blue-900 focus:border-blue-400 outline-none transition">
-            <input type="password" id="password" placeholder="Şifrə" class="w-full p-4 rounded-xl bg-gray-950 border border-blue-900 focus:border-blue-400 outline-none transition">
-            
+<div id="auth-screen" class="flex items-center justify-center min-h-screen p-4">
+    <div class="m1y-glass p-10 w-full max-w-md animate__animated animate__fadeIn">
+        <h1 class="text-5xl font-black text-center mb-8 bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent italic">M1YCHESS</h1>
+        <div class="space-y-4">
+            <input type="text" id="username" placeholder="İstifadəçi adı" class="w-full p-4 rounded-xl bg-slate-900 border border-slate-700 outline-none focus:border-blue-500">
+            <input type="password" id="password" placeholder="Şifrə" class="w-full p-4 rounded-xl bg-slate-900 border border-slate-700 outline-none focus:border-blue-500">
             <div class="grid grid-cols-2 gap-4">
-                <button onclick="handleRegister()" class="bg-purple-700 hover:bg-purple-600 p-4 rounded-xl font-bold transition-all shadow-lg shadow-purple-900/20">Qeydiyyat</button>
-                <button onclick="handleLogin()" class="bg-blue-700 hover:bg-blue-600 p-4 rounded-xl font-bold transition-all shadow-lg shadow-blue-900/20">Giriş</button>
+                <button onclick="handleAuth('reg')" class="bg-indigo-600 p-4 rounded-xl font-bold hover:bg-indigo-500">QEYDİYYAT</button>
+                <button onclick="handleAuth('login')" class="bg-blue-600 p-4 rounded-xl font-bold hover:bg-blue-500">GİRİŞ</button>
             </div>
         </div>
     </div>
 </div>
 
 <div id="main-screen" class="hidden min-h-screen">
-    <header class="p-6">
-        <div class="max-w-6xl mx-auto m1y-glass p-4 flex flex-wrap justify-between items-center gap-4">
-            <div class="flex items-center gap-4">
-                <div class="chess-coin">₵</div>
+    <header class="p-4 border-b border-white/5 bg-slate-950/50 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-yellow-500 rounded-full flex items-center justify-center text-black font-bold">₵</div>
                 <div>
-                    <h2 id="user-display-name" class="text-xl font-bold">...</h2>
-                    <p id="user-display-id" class="text-xs text-blue-400 font-mono"></p>
+                    <p id="u-name" class="font-bold leading-none">...</p>
+                    <p id="u-id" class="text-[10px] text-blue-400 font-mono mt-1"></p>
                 </div>
             </div>
-            
-            <nav class="flex gap-2 text-sm font-semibold">
-                <button onclick="showSection('play')" class="nav-btn">OYNA</button>
-                <button onclick="showSection('leaderboard')" class="nav-btn">LİDERLİK</button>
-                <button onclick="showSection('profile')" class="nav-btn">PROFİL</button>
-                <button onclick="handleLogout()" class="nav-btn text-red-400">ÇIXIŞ</button>
+            <nav class="flex gap-1">
+                <div onclick="showSection('home')" class="nav-link">ANA SƏHİFƏ</div>
+                <div onclick="showSection('play')" class="nav-link">OYNA</div>
+                <div onclick="showSection('leader')" class="nav-link">GLOBAL</div>
+                <div id="admin-btn" onclick="showSection('admin')" class="nav-link text-red-400 hidden">ADMIN</div>
+                <div onclick="handleLogout()" class="nav-link text-gray-500 italic">ÇIXIŞ</div>
             </nav>
         </div>
     </header>
 
     <main class="max-w-6xl mx-auto p-6">
-        <section id="play-section" class="section animate__animated animate__fadeIn">
-            <div class="grid md:grid-cols-3 gap-8 items-start">
-                <div class="md:col-span-2">
-                    <div id="board-container" class="shadow-2xl shadow-indigo-500/20"></div>
-                </div>
-                <div class="m1y-glass p-6 space-y-4">
-                    <div class="flex justify-between items-center border-b border-gray-700 pb-2">
-                        <h3 class="text-xl font-bold">Murad_GM</h3>
-                        <span class="text-xs text-green-400">2350 ELO</span>
-                    </div>
-                    <p id="game-status" class="text-yellow-400 font-medium italic text-sm">Sizin gedişiniz gözlənilir.</p>
-                    <div class="bg-black/20 p-3 rounded-lg text-center font-mono text-2xl text-red-500" id="game-timer">10:00</div>
-                    <button onclick="startNewGame()" class="w-full bg-indigo-600 py-3 rounded-xl font-bold hover:bg-indigo-500 transition">YENİ MATÇ</button>
-                    <button onclick="undoMove()" class="w-full bg-gray-800 py-3 rounded-xl font-bold hover:bg-gray-700 transition">GEDİŞİ GERİ AL</button>
+        <section id="home-sec" class="section active animate__animated animate__fadeIn">
+            <div class="m1y-glass p-12 text-center mt-10">
+                <h2 class="text-4xl font-bold mb-4">Xoş Gəldin, <span id="welcome-user" class="text-blue-400">...</span>!</h2>
+                <p class="text-gray-400 mb-8 max-w-md mx-auto italic">M1YCHESS-də strateji üstünlüyünü sübut et. Dostunla ID vasitəsilə yarış və ya Murad_GM botuna qalib gəl.</p>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <button onclick="showSection('play')" class="bg-blue-600 px-10 py-4 rounded-full font-black hover:scale-105 transition">OYUNA BAŞLA</button>
+                    <button onclick="copyMyID()" class="bg-slate-800 px-6 py-4 rounded-full text-xs font-bold">ID KOPYALA</button>
                 </div>
             </div>
         </section>
 
-        <section id="leaderboard-section" class="section hidden animate__animated animate__fadeInUp">
-            <div class="m1y-glass p-8 max-w-2xl mx-auto">
-                <h3 class="text-3xl font-bold mb-6 text-center text-yellow-500 italic underline decoration-blue-500">GLOBAL RANKING</h3>
-                <div class="space-y-3" id="leaderboard-body"></div>
-            </div>
-        </section>
-
-        <section id="profile-section" class="section hidden animate__animated animate__fadeIn">
-            <div class="m1y-glass p-8 max-w-md mx-auto">
-                <div class="text-center mb-6">
-                    <div class="w-24 h-24 bg-gradient-to-tr from-blue-600 to-purple-600 rounded-full mx-auto mb-4 flex items-center justify-center text-4xl">♟</div>
-                    <h3 class="text-2xl font-bold" id="prof-name-title"></h3>
+        <section id="play-sec" class="section animate__animated animate__zoomIn">
+            <div class="grid lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2">
+                    <div id="board-container" class="shadow-2xl shadow-blue-500/10"></div>
                 </div>
-                <div class="space-y-4">
+                <div class="m1y-glass p-6 space-y-6 h-fit">
                     <div>
-                        <label class="text-xs text-gray-400 uppercase">Haqqımda</label>
-                        <textarea id="prof-about" class="w-full p-3 bg-black/40 rounded-lg border border-white/10 outline-none focus:border-blue-500 h-32" placeholder="Heç nə yazılmayıb..."></textarea>
+                        <h3 class="text-xl font-bold text-red-500">Murad_GM (AI)</h3>
+                        <p id="status" class="text-yellow-400 text-sm italic mt-2">Sənin gedişini gözləyirəm...</p>
                     </div>
-                    <button onclick="updateProfile()" class="w-full bg-green-600 py-3 rounded-xl font-bold hover:bg-green-500">YADDA SAXLA</button>
+                    <div class="space-y-3">
+                        <button onclick="newGame()" class="w-full bg-slate-700 p-3 rounded-lg font-bold hover:bg-slate-600 transition text-sm">YENİ MATÇ</button>
+                        <button onclick="undo()" class="w-full bg-slate-800 p-3 rounded-lg text-xs font-bold text-gray-400">GERİ AL</button>
+                    </div>
+                    <div class="pt-4 border-t border-white/5">
+                        <p class="text-[11px] text-gray-500 uppercase font-bold mb-2">Dostunla Oyna (Tezliklə)</p>
+                        <input type="text" id="vs-id" placeholder="Dostunun ID-si" class="w-full p-3 bg-black/40 rounded border border-white/10 text-xs mb-2">
+                        <button class="w-full bg-indigo-900/40 p-2 rounded text-[10px] font-bold">DƏVƏT GÖNDƏR</button>
+                    </div>
                 </div>
+            </div>
+        </section>
+
+        <section id="leader-sec" class="section animate__animated animate__fadeInUp">
+            <div class="m1y-glass p-8 max-w-2xl mx-auto">
+                <h3 class="text-2xl font-black mb-8 text-center text-yellow-500">GLOBAL SIRALAMA</h3>
+                <div id="lider-body" class="space-y-3"></div>
+            </div>
+        </section>
+
+        <section id="admin-sec" class="section animate__animated animate__fadeIn">
+            <div class="m1y-glass p-8">
+                <h3 class="text-xl font-bold mb-6 text-red-500 border-b border-red-900 pb-2 uppercase tracking-widest">Sistem İstifadəçiləri</h3>
+                <div id="admin-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
             </div>
         </section>
     </main>
-</div>
-
-<div id="admin-modal" class="fixed inset-0 bg-black/95 z-[999] hidden p-6 overflow-y-auto">
-    <div class="max-w-4xl mx-auto">
-        <div class="flex justify-between items-center mb-8 border-b border-red-900 pb-4">
-            <h2 class="text-3xl font-black text-red-600 tracking-widest">CYBERISM CONTROL PANEL</h2>
-            <button onclick="closeAdmin()" class="text-white bg-red-600 px-4 py-1 rounded">X</button>
-        </div>
-        <div id="admin-user-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-    </div>
-</div>
-
-<div class="fixed bottom-4 right-4">
-    <span onclick="handleSecretClick()" class="cursor-pointer text-[10px] text-white/20 select-none hover:text-white transition">ismayilismayilov</span>
 </div>
 
 <script type="module">
@@ -175,264 +154,150 @@
     import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-    const firebaseConfig = {
+    const config = {
         apiKey: "AIzaSyB9mGWhVpa2QL7MkNoE4pmn8DiN8-8K4Uw",
         authDomain: "cyberism-7104c.firebaseapp.com",
-        databaseURL: "https://cyberism-7104c-default-rtdb.firebaseio.com",
         projectId: "cyberism-7104c",
-        storageBucket: "cyberism-7104c.firebasestorage.app",
+        storageBucket: "cyberism-7104c.appspot.com",
         messagingSenderId: "192151274908",
-        appId: "1:192151274908:web:984ded6f04bb9f1f89f459",
-        measurementId: "G-DMRVZ9T9CL"
+        appId: "1:192151274908:web:984ded6f04bb9f1f89f459"
     };
 
-    const app = initializeApp(firebaseConfig);
+    const app = initializeApp(config);
     const db = getFirestore(app);
     const auth = getAuth(app);
 
-    let currentUserData = null;
-    let adminClicks = 0;
     let game = new Chess();
-    let selectedSq = null;
+    let selected = null;
+    let user = null;
 
-    const unicodePieces = {
-        'p': { w: '♙', b: '♟' },
-        'r': { w: '♖', b: '♜' },
-        'n': { w: '♘', b: '♞' },
-        'b': { w: '♗', b: '♝' },
-        'q': { w: '♕', b: '♛' },
-        'k': { w: '♔', b: '♚' }
+    const pieces = {
+        'p': { w: '♙', b: '♟' }, 'r': { w: '♖', b: '♜' },
+        'n': { w: '♘', b: '♞' }, 'b': { w: '♗', b: '♝' },
+        'q': { w: '♕', b: '♛' }, 'k': { w: '♔', b: '♚' }
     };
 
-    // --- SÜNİ İNTELLƏKT (MİNİMAX + ALPHA-BETA) ---
-    function evaluateBoard(gameInstance) {
-        const weights = { p: 10, r: 50, n: 30, b: 30, q: 90, k: 900 };
-        let score = 0;
-        gameInstance.board().forEach(row => {
-            row.forEach(p => {
-                if (p) score += (p.color === 'w' ? weights[p.type] : -weights[p.type]);
-            });
-        });
-        return score;
+    // --- TAXTA SİSTEMİ ---
+    function render() {
+        const board = document.getElementById('board-container');
+        if(!board) return;
+        board.innerHTML = '';
+        game.board().forEach((row, i) => row.forEach((p, j) => {
+            const pos = String.fromCharCode(97+j) + (8-i);
+            const sq = document.createElement('div');
+            sq.className = `sq ${(i+j)%2===0 ? 'w-sq' : 'b-sq'}`;
+            if(selected === pos) sq.classList.add('selected-sq');
+            if(p) sq.innerHTML = `<span class="piece ${p.color}">${pieces[p.type][p.color]}</span>`;
+            sq.onclick = () => {
+                if(game.turn() === 'b') return;
+                if(selected === pos) selected = null;
+                else if(selected) {
+                    let move = game.move({from: selected, to: pos, promotion: 'q'});
+                    if(move) { selected = null; render(); botGo(); }
+                    else selected = pos;
+                } else selected = pos;
+                render();
+            };
+            board.appendChild(sq);
+        }));
     }
 
-    function minimax(currGame, depth, alpha, beta, isMaximizing) {
-        if (depth === 0) return -evaluateBoard(currGame);
-        let moves = currGame.moves();
-        if (isMaximizing) {
-            let best = -Infinity;
-            for (let m of moves) {
-                currGame.move(m);
-                best = Math.max(best, minimax(currGame, depth - 1, alpha, beta, false));
-                currGame.undo();
-                alpha = Math.max(alpha, best);
-                if (beta <= alpha) break;
-            }
-            return best;
-        } else {
-            let best = Infinity;
-            for (let m of moves) {
-                currGame.move(m);
-                best = Math.min(best, minimax(currGame, depth - 1, alpha, beta, true));
-                currGame.undo();
-                beta = Math.min(beta, best);
-                if (beta <= alpha) break;
-            }
-            return best;
-        }
-    }
-
-    function makeAiMove() {
-        let moves = game.moves();
-        if (game.game_over()) return;
-
-        let bestMove = null;
-        let bestVal = Infinity;
-
-        for (let m of moves) {
-            game.move(m);
-            let val = minimax(game, 3, -Infinity, Infinity, true); // Dərinlik 3 - Çox Güclüdür
-            game.undo();
-            if (val < bestVal) {
-                bestVal = val;
-                bestMove = m;
-            }
-        }
-
+    function botGo() {
+        document.getElementById('status').innerText = "Murad_GM hesablayır...";
         setTimeout(() => {
-            game.move(bestMove);
-            renderBoard();
-            checkStatus();
-        }, 1200);
+            let moves = game.moves();
+            if(game.game_over()) return checkResult();
+            game.move(moves[Math.floor(Math.random() * moves.length)]);
+            render();
+            document.getElementById('status').innerText = "Sənin gedişin...";
+            checkResult();
+        }, 600);
     }
 
-    // --- TAXTA RENDER SİSTEMİ ---
-    function renderBoard() {
-        const boardContainer = document.getElementById('board-container');
-        if(!boardContainer) return;
-        boardContainer.innerHTML = '';
-        const boardArray = game.board();
-
-        for (let i = 0; i < 8; i++) {
-            for (let j = 0; j < 8; j++) {
-                const sqName = String.fromCharCode(97 + j) + (8 - i);
-                const sq = document.createElement('div');
-                sq.className = `sq ${(i + j) % 2 === 0 ? 'w-sq' : 'b-sq'}`;
-                if (selectedSq === sqName) sq.classList.add('selected-sq');
-                
-                const piece = boardArray[i][j];
-                if (piece) {
-                    sq.innerHTML = `<span class="piece ${piece.color}">${unicodePieces[piece.type][piece.color]}</span>`;
-                }
-
-                sq.onclick = () => onSquareClick(sqName);
-                boardContainer.appendChild(sq);
-            }
+    async function checkResult() {
+        if(game.in_checkmate() && game.turn() === 'b') {
+            alert("TEBRİKLER! Mat etdiniz. +100 Coin!");
+            const nc = (user.chessCoin || 0) + 100;
+            await updateDoc(doc(db, "users", auth.currentUser.uid), { chessCoin: nc });
+            user.chessCoin = nc;
         }
     }
 
-    function onSquareClick(pos) {
-        if (game.turn() === 'b') return;
-
-        if (selectedSq === pos) {
-            selectedSq = null;
-        } else if (selectedSq) {
-            const move = game.move({ from: selectedSq, to: pos, promotion: 'q' });
-            if (move) {
-                selectedSq = null;
-                renderBoard();
-                document.getElementById('game-status').innerText = "Murad_GM düşünür...";
-                makeAiMove();
-            } else {
-                selectedSq = pos;
-            }
-        } else {
-            selectedSq = pos;
-        }
-        renderBoard();
-    }
-
-    // --- FİREBASE VƏ LOGİC ---
-    window.handleRegister = async () => {
+    // --- FIREBASE VƏ NAVİQASİYA ---
+    window.handleAuth = async (mode) => {
         const u = document.getElementById('username').value;
         const p = document.getElementById('password').value;
-        if(!u || p.length < 6) return alert("Məlumatları düzgün doldur!");
         try {
-            const res = await createUserWithEmailAndPassword(auth, `${u}@m1y.com`, p);
-            const rId = "M1Y-" + Math.floor(100000 + Math.random() * 900000);
-            await setDoc(doc(db, "users", res.user.uid), {
-                username: u, randomId: rId, chessCoin: 0, about: "", isBanned: false, createdAt: new Date()
-            });
-            alert("Uğurla qeydiyyatdan keçdiniz!");
-        } catch (e) { alert("Xəta: " + e.message); }
+            if(mode === 'reg') {
+                const res = await createUserWithEmailAndPassword(auth, `${u}@m1y.com`, p);
+                const rid = "M1Y-" + Math.floor(100000 + Math.random() * 900000);
+                await setDoc(doc(db, "users", res.user.uid), {
+                    username: u, randomId: rid, chessCoin: 0, isAdmin: (u === 'admin')
+                });
+            } else await signInWithEmailAndPassword(auth, `${u}@m1y.com`, p);
+        } catch(e) { alert("Xəta: Məlumatları yoxlayın."); }
     };
 
-    window.handleLogin = async () => {
-        const u = document.getElementById('username').value;
-        const p = document.getElementById('password').value;
-        try { await signInWithEmailAndPassword(auth, `${u}@m1y.com`, p); } catch (e) { alert("Giriş alınmadı!"); }
-    };
-
-    window.handleLogout = () => signOut(auth);
-
-    onAuthStateChanged(auth, async (user) => {
-        if (user) {
-            const snap = await getDoc(doc(db, "users", user.uid));
-            if (snap.exists()) {
-                currentUserData = snap.data();
-                if(currentUserData.isBanned) { signOut(auth); return; }
-                document.getElementById('auth-screen').classList.add('hidden');
-                document.getElementById('main-screen').classList.remove('hidden');
-                updateUI();
-                renderBoard();
-            }
+    onAuthStateChanged(auth, async (u) => {
+        if(u) {
+            const s = await getDoc(doc(db, "users", u.uid));
+            user = s.data();
+            document.getElementById('auth-screen').classList.add('hidden');
+            document.getElementById('main-screen').classList.remove('hidden');
+            document.getElementById('u-name').innerText = user.username;
+            document.getElementById('welcome-user').innerText = user.username;
+            document.getElementById('u-id').innerText = user.randomId;
+            if(user.isAdmin) document.getElementById('admin-btn').classList.remove('hidden');
+            render();
         } else {
             document.getElementById('auth-screen').classList.remove('hidden');
             document.getElementById('main-screen').classList.add('hidden');
         }
     });
 
-    function updateUI() {
-        document.getElementById('user-display-name').innerText = currentUserData.username;
-        document.getElementById('user-display-id').innerText = currentUserData.randomId;
-        document.getElementById('prof-name-title').innerText = currentUserData.username;
-    }
-
-    window.startNewGame = () => { game.reset(); selectedSq = null; renderBoard(); document.getElementById('game-status').innerText = "Yeni oyun başladı!"; };
-    window.undoMove = () => { game.undo(); game.undo(); renderBoard(); };
-
-    async function checkStatus() {
-        if(game.in_checkmate()) {
-            const isUserWin = game.turn() === 'b'; 
-            document.getElementById('game-status').innerText = isUserWin ? "MAT! QAZANDINIZ! (+200 Coin)" : "MAT! Murad_GM qazandı.";
-            if(isUserWin) {
-                const newBalance = (currentUserData.chessCoin || 0) + 200;
-                await updateDoc(doc(db, "users", auth.currentUser.uid), { chessCoin: newBalance });
-                currentUserData.chessCoin = newBalance;
-            }
-        } else if (game.in_draw()) {
-            document.getElementById('game-status').innerText = "HEÇ-HEÇƏ!";
-        } else {
-            document.getElementById('game-status').innerText = "Sizin gedişiniz.";
-        }
-    }
-
-    // Leaderboard və digər funksiyalar olduğu kimi qalır
     window.showSection = (name) => {
-        document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
-        document.getElementById(`${name}-section`).classList.remove('hidden');
-        if(name === 'leaderboard') fetchLeaderboard();
-        if(name === 'profile') document.getElementById('prof-about').value = currentUserData.about || "";
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.getElementById(name + '-sec').classList.add('active');
+        if(name === 'leader') fetchLeaders();
+        if(name === 'admin') fetchAdminUsers();
     };
 
-    async function fetchLeaderboard() {
+    async function fetchLeaders() {
         const q = query(collection(db, "users"), orderBy("chessCoin", "desc"), limit(10));
-        const snap = await getDocs(q);
-        const container = document.getElementById('leaderboard-body');
-        container.innerHTML = "";
-        let rank = 1;
-        snap.forEach(doc => {
-            const u = doc.data();
-            container.innerHTML += `<div class="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5"><div class="flex items-center gap-4"><span class="text-2xl font-black ${rank <= 3 ? 'text-yellow-500' : 'text-blue-500'}">#${rank++}</span><div><p class="font-bold">${u.username}</p></div></div><span class="text-yellow-500 font-bold">${u.chessCoin} ₵</span></div>`;
+        const snp = await getDocs(q);
+        const body = document.getElementById('lider-body');
+        body.innerHTML = '';
+        snp.forEach((d, i) => {
+            const ud = d.data();
+            body.innerHTML += `<div class="flex justify-between p-4 bg-white/5 rounded-xl border border-white/5">
+                <span class="font-bold text-blue-400">#${i+1} ${ud.username}</span>
+                <span class="text-yellow-500 font-mono font-bold">${ud.chessCoin} ₵</span>
+            </div>`;
         });
     }
 
-    window.updateProfile = async () => {
-        const about = document.getElementById('prof-about').value;
-        await updateDoc(doc(db, "users", auth.currentUser.uid), { about });
-        currentUserData.about = about;
-        alert("Profil yeniləndi!");
-    };
-
-    window.handleSecretClick = () => {
-        adminClicks++;
-        if(adminClicks >= 5) {
-            const p = prompt("ACCESS CODE:");
-            if(p === 'qaqa0202"!') loadAdminPanel();
-            else adminClicks = 0;
-        }
-    };
-
-    async function loadAdminPanel() {
-        document.getElementById('admin-modal').classList.remove('hidden');
-        const snap = await getDocs(collection(db, "users"));
-        const list = document.getElementById('admin-user-list');
-        list.innerHTML = "";
-        snap.forEach(uDoc => {
-            const u = uDoc.data();
-            list.innerHTML += `<div class="p-4 bg-gray-900 border ${u.isBanned ? 'border-red-600' : 'border-gray-700'} rounded-xl flex justify-between items-center"><div><p class="font-bold">${u.username}</p></div><button onclick="toggleBan('${uDoc.id}', ${!u.isBanned})" class="px-4 py-2 rounded font-bold ${u.isBanned ? 'bg-green-600' : 'bg-red-600'}">${u.isBanned ? 'AÇ' : 'BANLA'}</button></div>`;
+    async function fetchAdminUsers() {
+        const snp = await getDocs(collection(db, "users"));
+        const list = document.getElementById('admin-list');
+        list.innerHTML = '';
+        snp.forEach(d => {
+            const ud = d.data();
+            list.innerHTML += `<div class="p-4 bg-slate-900 border border-slate-700 rounded-xl">
+                <p class="font-bold text-sm">${ud.username}</p>
+                <p class="text-[10px] text-gray-500">${ud.randomId}</p>
+                <div class="mt-3 text-yellow-500 text-xs font-bold">${ud.chessCoin} Coin</div>
+            </div>`;
         });
     }
 
-    window.toggleBan = async (uid, status) => {
-        await updateDoc(doc(db, "users", uid), { isBanned: status });
-        loadAdminPanel();
-    };
+    window.copyMyID = () => {
+        navigator.clipboard.writeText(user.randomId);
+        alert("ID Kopyalandı!");
+    }
 
-    window.closeAdmin = () => {
-        document.getElementById('admin-modal').classList.add('hidden');
-        adminClicks = 0;
-    };
+    window.handleLogout = () => signOut(auth);
+    window.newGame = () => { game.reset(); render(); };
+    window.undo = () => { game.undo(); game.undo(); render(); };
 
 </script>
 </body>
